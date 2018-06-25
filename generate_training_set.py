@@ -12,10 +12,9 @@ def get_dataset(num_samples=None):
   for fn in os.listdir("data"):
     pgn = open(os.path.join("data", fn))
     while 1:
-      try:
-        game = chess.pgn.read_game(pgn)
-      except Exception:
-        break
+      game = chess.pgn.read_game(pgn)
+      if game is None:
+        continue
       res = game.headers['Result']
       if res not in values:
         continue

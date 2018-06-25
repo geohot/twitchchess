@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import chess
 import torch
 from state import State
 from train import Net
@@ -14,12 +15,24 @@ class Valuator(object):
     output = self.model(torch.tensor(brd).float())
     return float(output.data[0][0])
 
+def explore_leaves(s, v):
+  ret = []
+  for e in s.edges():
+    s.board.push(e)
+    ret.append((v(s), e))
+    s.board.pop()
+  return ret
+
 if __name__ == "__main__":
   v = Valuator()
   s = State()
-  print(v(s))
-  for e in s.edges():
-    s.board.push(e)
-    print(e, v(s))
-    s.board.pop()
+  while not s.board.is_game_over():
+    l = sorted(explore_leaves(s, v), key=lambda x: x[0], reverse=s.board.turn)
+    move = l[0]
+    print(move)
+    s.board.push(move[1])
+  print(s.board.result())
+      
+      
+
 
