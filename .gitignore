@@ -2,4 +2,3 @@
 *.pyc
 data/
 processed/
-nets/
