@@ -75,22 +75,29 @@ model = Net()
 optimizer = optim.Adam(model.parameters())
 floss = nn.MSELoss()
 
-device = "cpu"
+device = "cuda"
+model.cuda()
 
 model.train()
-for batch_idx, (data, target) in enumerate(train_loader):
-  target = target.unsqueeze(-1)
-  data, target = data.to(device), target.to(device)
-  data = data.float()
-  target = target.float()
 
-  #print(data.shape, target.shape)
-  optimizer.zero_grad()
-  output = model(data)
-  #print(output.shape)
+for epoch in range(100):
+  all_loss = 0
+  for batch_idx, (data, target) in enumerate(train_loader):
+    target = target.unsqueeze(-1)
+    data, target = data.to(device), target.to(device)
+    data = data.float()
+    target = target.float()
 
-  loss = floss(output, target)
-  loss.backward()
-  optimizer.step()
-  print("%d: %f" % (batch_idx, loss.data[0]))
+    #print(data.shape, target.shape)
+    optimizer.zero_grad()
+    output = model(data)
+    #print(output.shape)
+
+    loss = floss(output, target)
+    loss.backward()
+    optimizer.step()
+    
+    all_loss += loss.item()
+
+  print("%3d: %f" % (epoch, all_loss))
 
