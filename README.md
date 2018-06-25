@@ -13,6 +13,9 @@ Usage
 -----
 
 ```
+ # install pytorch and flask and probably more stuff
+ # TODO: document more stuff
+ # then...
  ./play.py   # runs webserver on localhost:5000
 ```
 
