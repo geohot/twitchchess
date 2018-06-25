@@ -19,6 +19,14 @@ Usage
  ./play.py   # runs webserver on localhost:5000
 ```
 
+TODOs
+-----
+
+* Roll out search beyond 1-ply
+* Make trainer multi GPU
+* Train on more data
+* Add RL self play learning support
+
 Implementation
 -----
 
