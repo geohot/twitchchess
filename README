@@ -1,5 +1,10 @@
 Zero Knowledge Chess Engine (liar!)
 
+== Usage ==
+ ./play.py   # runs webserver on localhost:5000
+
+== Other Crap ==
+
 * Establish the search tree
 * Use a neural net to prune the search tree
 
