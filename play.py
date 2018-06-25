@@ -43,6 +43,7 @@ def hello():
   ret = '<html><head>'
   ret += '<style>input { font-size: 30px; } button { font-size: 30px; }</style>'
   ret += '</head><body>'
+  ret += '<a href="/selfplay">Play vs itself</a><br/>'
   ret += '<img width=600 height=600 src="data:image/svg+xml;base64,%s"></img><br/>' % board_svg
   ret += '<form action="/move"><input name="move" type="text"></input><input type="submit" value="Move"></form><br/>'
   return ret
