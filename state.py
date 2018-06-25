@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import chess
 import numpy as np
+from train import Net
 
 class State(object):
   def __init__(self, board=None):
@@ -55,11 +56,6 @@ class State(object):
   def edges(self):
     return list(self.board.legal_moves)
 
-  def value(self):
-    # TODO: add neural net here
-    return 1   # communists will be happy. all board positions are equal
-
 if __name__ == "__main__":
   s = State()
-  #print(s.edges())
-  print(s.serialize())
+

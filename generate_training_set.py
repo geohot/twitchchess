@@ -35,6 +35,6 @@ def get_dataset(num_samples=None):
   return X,Y
 
 if __name__ == "__main__":
-  X,Y = get_dataset(100000)
-  np.savez("processed/dataset_100k.npz", X, Y)
+  X,Y = get_dataset(10000000)
+  np.savez("processed/dataset_10M.npz", X, Y)
 
