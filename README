@@ -6,6 +6,20 @@ Zero Knowledge Chess Engine (liar!)
 Definition: Value network
 V = f(state)
 
+What is V?
+V = -1 black wins board state
+V = 0 draw board state
+V = 1 white wins board state
+
+Should we fix the value of the initial board state?
+
+What's the value of "about to lose"?
+
+Simpler:
+All positions where white wins = 1
+All positions where draw = 0
+All positions where black wins = -1
+
 State(Board):
 
 Pieces(2+7*2 = 16):
@@ -24,4 +38,4 @@ Pieces(2+7*2 = 16):
 Extra state:
 * To move
 
-8x8x4 + 1 = 257 bits (vector of 0 or 1)
+8x8x5 = 257 bits (vector of 0 or 1)
