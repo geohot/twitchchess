@@ -4,6 +4,7 @@ import time
 import torch
 import chess.svg
 import traceback
+import base64
 from state import State
 from train import Net
 
@@ -30,28 +31,43 @@ def explore_leaves(s, v):
 s = State()
 v = Valuator()
 
+def to_svg(s):
+  return base64.b64encode(chess.svg.board(board=s.board).encode('utf-8')).decode('utf-8')
 
 from flask import Flask, Response, request
 app = Flask(__name__)
 
 @app.route("/")
 def hello():
+  board_svg = to_svg(s)
   ret = '<html><head>'
   ret += '<style>input { font-size: 30px; } button { font-size: 30px; }</style>'
   ret += '</head><body>'
-  ret += '<img width=600 height=600 src="/board.svg?%f"></img><br/>' % time.time()
+  ret += '<img width=600 height=600 src="data:image/svg+xml;base64,%s"></img><br/>' % board_svg
   ret += '<form action="/move"><input name="move" type="text"></input><input type="submit" value="Move"></form><br/>'
   return ret
 
-@app.route("/board.svg")
-def board():
-  return Response(chess.svg.board(board=s.board), mimetype='image/svg+xml')
-
-def computer_move():
+def computer_move(s, v):
   # computer move
-  move = sorted(explore_leaves(s, v), key=lambda x: x[0], reverse=s.board.turn)[0]
-  print(move)
-  s.board.push(move[1])
+  move = sorted(explore_leaves(s, v), key=lambda x: x[0], reverse=s.board.turn)
+  print("top 3:")
+  for i,m in enumerate(move[0:3]):
+    print("  ",m)
+  s.board.push(move[0][1])
+
+@app.route("/selfplay")
+def selfplay():
+  s = State()
+
+  ret = '<html><head>'
+  # self play
+  while not s.board.is_game_over():
+    computer_move(s, v)
+    ret += '<img width=600 height=600 src="data:image/svg+xml;base64,%s"></img><br/>' % to_svg(s)
+  print(s.board.result())
+
+  return ret
+
 
 @app.route("/move")
 def move():
@@ -61,7 +77,7 @@ def move():
       print("human moves", move)
       try:
         s.board.push_san(move)
-        computer_move()
+        computer_move(s, v)
       except Exception:
         traceback.print_exc()
   else:
@@ -70,15 +86,4 @@ def move():
 
 if __name__ == "__main__":
   app.run(debug=True)
-
-"""
-if __name__ == "__main__":
-  # self play
-  while not s.board.is_game_over():
-    l = sorted(explore_leaves(s, v), key=lambda x: x[0], reverse=s.board.turn)
-    move = l[0]
-    print(move)
-    s.board.push(move[1])
-  print(s.board.result())
-"""
 
