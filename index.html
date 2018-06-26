@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+
+<title>twitchchess</title>
+
+<link rel="stylesheet" type="text/css" href="static/chessboard.min.css">
+
+<script src="static/jquery.min.js"></script>
+<script src="static/chessboard.min.js"></script>
+
+</head>
+<body style="font-size: 20px;">
+
+<a href="/selfplay">Play vs itself</a><br/>
+<div id="board" style="width: 600px"></div>
+<p></p>
+
+
+<script type="text/javascript">
+
+var board = ChessBoard('board', {
+  position: 'start',
+  draggable: true,
+  onDrop: onDrop
+});
+
+function onDrop(source, target, piece) {
+  var pn = piece.includes('b') ? piece.toLowerCase().substring(1, 2) : piece.substring(1, 2);
+  pn = piece.includes('P') ? '' : pn;
+  var move = piece.includes("P") ? source + target : pn + target;
+  move = piece.includes("P") && target.includes("8") ? target.substring(0, 1) + "8Q" : move; // pawn promotion
+
+  $.get('/move', {'move': move}, function(r) {
+    if (r.includes("game over")) {
+      document.querySelector("p").innerText = "game over";
+    } else {
+      document.querySelector("p").innerText = "";
+      board.position(r);
+    }
+  });
+}
+
+</script>
+
+</body>
+</html>
