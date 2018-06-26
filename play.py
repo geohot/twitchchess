@@ -39,16 +39,8 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-  board_svg = to_svg(s)
-  ret = '<html><head>'
-  ret += '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>'
-  ret += '<style>input { font-size: 30px; } button { font-size: 30px; }</style>'
-  ret += '</head><body>'
-  ret += '<a href="/selfplay">Play vs itself</a><br/>'
-  ret += '<img width=600 height=600 src="data:image/svg+xml;base64,%s"></img><br/>' % board_svg
-  ret += '<form action="/move"><input id="move" name="move" type="text"></input><input type="submit" value="Move"></form><br/>'
-  ret += '<script>$(function() { var input = document.getElementById("move"); console.log("selected"); input.focus(); input.select(); }); </script>'
-  return ret
+  ret = open("index.html").read()
+  return ret.replace('start', s.board.fen())
 
 def computer_move(s, v):
   # computer move
@@ -83,8 +75,19 @@ def move():
         computer_move(s, v)
       except Exception:
         traceback.print_exc()
+      response = app.response_class(
+        response=s.board.fen(),
+        status=200
+      )
+      return response
   else:
     print("GAME IS OVER")
+    response = app.response_class(
+      response="game over",
+      status=200
+    )
+    return response
+  print("hello ran")
   return hello()
 
 if __name__ == "__main__":
