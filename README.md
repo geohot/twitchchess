@@ -13,8 +13,7 @@ Usage
 -----
 
 ```
- # install pytorch and flask and probably more stuff
- # TODO: document more stuff
+ pip3 install python-chess torch torchvision flask
  # then...
  ./play.py   # runs webserver on localhost:5000
 ```
