@@ -127,6 +127,7 @@ def selfplay():
   return ret
 
 
+# move given in algebraic notation
 @app.route("/move")
 def move():
   if not s.board.is_game_over():
@@ -152,6 +153,46 @@ def move():
     return response
   print("hello ran")
   return hello()
+
+# moves given as coordinates of piece moved
+@app.route("/move_coordinates")
+def move_coordinates():
+  if not s.board.is_game_over():
+    source = int(request.args.get('from', default=''))
+    target = int(request.args.get('to', default=''))
+    promotion = True if request.args.get('promotion', default='') == 'true' else False
+
+    move = s.board.san(chess.Move(source, target, promotion=chess.QUEEN if promotion else None))
+
+    if move is not None and move != "":
+      print("human moves", move)
+      try:
+        s.board.push_san(move)
+        computer_move(s, v)
+      except Exception:
+        traceback.print_exc()
+    response = app.response_class(
+      response=s.board.fen(),
+      status=200
+    )
+    return response
+
+  print("GAME IS OVER")
+  response = app.response_class(
+    response="game over",
+    status=200
+  )
+  return response
+
+@app.route("/newgame")
+def newgame():
+  s.board.reset()
+  response = app.response_class(
+    response=s.board.fen(),
+    status=200
+  )
+  return response
+
 
 if __name__ == "__main__":
   if os.getenv("SELFPLAY") is not None:

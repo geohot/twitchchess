@@ -12,7 +12,8 @@
 </head>
 <body style="font-size: 20px;">
 
-<a href="/selfplay">Play vs itself</a><br/>
+<a href="/selfplay">Play vs itself</a>
+<button onclick="newGame()">new game</button><br/>
 <div id="board" style="width: 600px"></div>
 <p></p>
 
@@ -25,22 +26,33 @@ var board = ChessBoard('board', {
   onDrop: onDrop
 });
 
-function onDrop(source, target, piece) {
-  var pn = piece.includes('b') ? piece.toLowerCase().substring(1, 2) : piece.substring(1, 2);
-  pn = piece.includes('P') ? '' : pn;
-  var move = piece.includes("P") ? source + target : pn  + source.substring(0, 1) + target;
-  move = piece.includes("P") && target.includes("8") ? target.substring(0, 1) + "8Q" : move; // pawn promotion
+var files = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7};
+function get_square(sq) {
+  return 8*(parseInt(sq.charAt(1)) - 1) + files[sq.charAt(0)];
+}
 
-  $.get('/move', {'move': move}, function(r) {
+
+function onDrop(source, target, piece) {
+  if(source == target) return
+
+  var promotion = piece.toLowerCase().charAt(1) == 'p' && parseInt(target.charAt(1)) == 8;
+
+  $.get('/move_coordinates', {'from': get_square(source), 'to': get_square(target), 'promotion': promotion}, function(r) {
     if (r.includes("game over")) {
-      document.querySelector("p").innerText = "game over";
+      document.querySelector('p').innerText = 'game over';
     } else {
-      document.querySelector("p").innerText = "";
+      document.querySelector('p').innerText = '';
       board.position(r);
     }
   });
 }
 
+function newGame() {
+  $.get('/newgame', function(r) {
+    document.querySelector('p').innerText = '';
+    board.position(r);
+  });
+}
 </script>
 
 </body>
