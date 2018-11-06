@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import chess
 import numpy as np
-from train import Net
 
 class State(object):
   def __init__(self, board=None):

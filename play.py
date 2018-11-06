@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
+from __future__ import print_function
 import os
 import chess
 import time
-import torch
 import chess.svg
 import traceback
 import base64
 from state import State
-from train import Net
-
 
 class Valuator(object):
   def __init__(self):
+    import torch
+    from train import Net
     vals = torch.load("nets/value.pth", map_location=lambda storage, loc: storage)
     self.model = Net()
     self.model.load_state_dict(vals)
@@ -83,7 +83,7 @@ class ClassicValuator(object):
     return val
 
 def computer_minimax(s, v, depth, a, b, big=False):
-  if depth >= 3 or s.board.is_game_over():
+  if depth >= 5 or s.board.is_game_over():
     return v(s)
   # white is maximizing player
   turn = s.board.turn
@@ -93,7 +93,20 @@ def computer_minimax(s, v, depth, a, b, big=False):
     ret = MAXVAL
   if big:
     bret = []
-  for e in s.edges():
+
+  # can prune here with beam search
+  isort = []
+  for e in s.board.legal_moves:
+    s.board.push(e)
+    isort.append((v(s), e))
+    s.board.pop()
+  move = sorted(isort, key=lambda x: x[0], reverse=s.board.turn)
+
+  # beam search beyond depth 3
+  if depth >= 3:
+    move = move[:10]
+
+  for e in [x[1] for x in move]:
     s.board.push(e)
     tval = computer_minimax(s, v, depth+1, a, b)
     s.board.pop()
@@ -116,10 +129,10 @@ def computer_minimax(s, v, depth, a, b, big=False):
 
 def explore_leaves(s, v):
   ret = []
-  start = time.monotonic()
+  start = time.time()
   v.reset()
   cval, ret = computer_minimax(s, v, 0, a=-MAXVAL, b=MAXVAL, big=True)
-  eta = time.monotonic() - start
+  eta = time.time() - start
   print("%.2f: explored %d nodes in %.3f seconds %d/sec" % (cval, v.count, eta, int(v.count/eta)))
   return ret
 
