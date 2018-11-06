@@ -35,39 +35,47 @@ class ClassicValuator(object):
             chess.KING: 0}
 
   def __init__(self):
-    pass
+    self.reset()
+    self.memo = {}
+
+  def reset(self):
+    self.count = 0
 
   # writing a simple value function based on pieces
   # good ideas:
   # https://en.wikipedia.org/wiki/Evaluation_function#In_chess
   def __call__(self, s):
-    b = s.board
-    if b.is_variant_win():
-      if b.turn == chess.WHITE:
-        return MAXVAL
-      else:
-        return -MAXVAL
-    if b.is_variant_loss():
-      if b.turn == chess.WHITE:
-        return -MAXVAL
-      else:
-        return MAXVAL
-    val = 0.0
-    pm = s.board.piece_map()
-    for x in pm:
-      tval = self.values[pm[x].piece_type]
-      if pm[x].color == chess.WHITE:
-        val += tval
-      else:
-        val -= tval
-    # add a number of legal moves term (slow!?)
-    bak = b.turn
-    b.turn = chess.WHITE
-    val += 0.1 * b.legal_moves.count()
-    b.turn = chess.BLACK
-    val -= 0.1 * b.legal_moves.count()
-    b.turn = bak
-    return val
+    self.count += 1
+    key = s.key()
+    if key not in self.memo:
+      b = s.board
+      if b.is_variant_win():
+        if b.turn == chess.WHITE:
+          return MAXVAL
+        else:
+          return -MAXVAL
+      if b.is_variant_loss():
+        if b.turn == chess.WHITE:
+          return -MAXVAL
+        else:
+          return MAXVAL
+      val = 0.0
+      pm = s.board.piece_map()
+      for x in pm:
+        tval = self.values[pm[x].piece_type]
+        if pm[x].color == chess.WHITE:
+          val += tval
+        else:
+          val -= tval
+      # add a number of legal moves term (slow!?)
+      bak = b.turn
+      b.turn = chess.WHITE
+      val += 0.1 * b.legal_moves.count()
+      b.turn = chess.BLACK
+      val -= 0.1 * b.legal_moves.count()
+      b.turn = bak
+      self.memo[key] = val
+    return self.memo[key]
 
 def computer_minimax(s, v, depth=2):
   if depth == 0 or s.board.is_game_over():
@@ -90,11 +98,15 @@ def computer_minimax(s, v, depth=2):
 
 def explore_leaves(s, v):
   ret = []
+  start = time.monotonic()
+  v.reset()
   for e in s.edges():
     s.board.push(e)
     #ret.append((v(s), e))
     ret.append((computer_minimax(s, v), e))
     s.board.pop()
+  eta = time.monotonic() - start
+  print("explored %d nodes in %.3f seconds" % (v.count, eta))
   return ret
 
 # chess board and "engine"
