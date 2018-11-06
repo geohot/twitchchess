@@ -1,6 +1,6 @@
 # twitchchess
 
-A toy implementation of neural network chess written while livestreaming.
+A toy implementation of ~~neural network~~ normal chess written while livestreaming.
 
 <img width=600px src="https://raw.githubusercontent.com/geohot/twitchchess/master/screenshot.png" />
 
