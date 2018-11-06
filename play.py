@@ -38,18 +38,21 @@ class ClassicValuator(object):
     pass
 
   # writing a simple value function based on pieces
+  # good ideas:
+  # https://en.wikipedia.org/wiki/Evaluation_function#In_chess
   def __call__(self, s):
-    if s.board.is_variant_win():
-      if s.turn == chess.WHITE:
+    b = s.board
+    if b.is_variant_win():
+      if b.turn == chess.WHITE:
         return MAXVAL
       else:
         return -MAXVAL
-    if s.board.is_variant_loss():
-      if s.turn == chess.WHITE:
+    if b.is_variant_loss():
+      if b.turn == chess.WHITE:
         return -MAXVAL
       else:
         return MAXVAL
-    val = 0
+    val = 0.0
     pm = s.board.piece_map()
     for x in pm:
       tval = self.values[pm[x].piece_type]
@@ -57,6 +60,13 @@ class ClassicValuator(object):
         val += tval
       else:
         val -= tval
+    # add a number of legal moves term (slow!?)
+    bak = b.turn
+    b.turn = chess.WHITE
+    val += 0.1 * b.legal_moves.count()
+    b.turn = chess.BLACK
+    val -= 0.1 * b.legal_moves.count()
+    b.turn = bak
     return val
 
 def computer_minimax(s, v, depth=2):
@@ -107,6 +117,8 @@ def hello():
 def computer_move(s, v):
   # computer move
   move = sorted(explore_leaves(s, v), key=lambda x: x[0], reverse=s.board.turn)
+  if len(move) == 0:
+    return
   print("top 3:")
   for i,m in enumerate(move[0:3]):
     print("  ",m)
