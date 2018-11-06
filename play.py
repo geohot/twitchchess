@@ -48,37 +48,42 @@ class ClassicValuator(object):
     self.count += 1
     key = s.key()
     if key not in self.memo:
-      b = s.board
-      if b.is_variant_win():
-        if b.turn == chess.WHITE:
-          return MAXVAL
-        else:
-          return -MAXVAL
-      if b.is_variant_loss():
-        if b.turn == chess.WHITE:
-          return -MAXVAL
-        else:
-          return MAXVAL
-      val = 0.0
-      pm = s.board.piece_map()
-      for x in pm:
-        tval = self.values[pm[x].piece_type]
-        if pm[x].color == chess.WHITE:
-          val += tval
-        else:
-          val -= tval
-      # add a number of legal moves term (slow!?)
-      bak = b.turn
-      b.turn = chess.WHITE
-      val += 0.1 * b.legal_moves.count()
-      b.turn = chess.BLACK
-      val -= 0.1 * b.legal_moves.count()
-      b.turn = bak
-      self.memo[key] = val
+      self.memo[key] = self.value(s)
     return self.memo[key]
 
-def computer_minimax(s, v, depth=2):
-  if depth == 0 or s.board.is_game_over():
+  def value(self, s):
+    b = s.board
+    # game over values
+    if b.is_game_over():
+      if b.result() == "1-0":
+        return MAXVAL
+      elif b.result() == "0-1":
+        return -MAXVAL
+      else:
+        return 0
+
+    val = 0.0
+    # piece values
+    pm = s.board.piece_map()
+    for x in pm:
+      tval = self.values[pm[x].piece_type]
+      if pm[x].color == chess.WHITE:
+        val += tval
+      else:
+        val -= tval
+
+    # add a number of legal moves term
+    bak = b.turn
+    b.turn = chess.WHITE
+    val += 0.1 * b.legal_moves.count()
+    b.turn = chess.BLACK
+    val -= 0.1 * b.legal_moves.count()
+    b.turn = bak
+
+    return val
+
+def computer_minimax(s, v, depth, a, b, big=False):
+  if depth >= 3 or s.board.is_game_over():
     return v(s)
   # white is maximizing player
   turn = s.board.turn
@@ -86,27 +91,36 @@ def computer_minimax(s, v, depth=2):
     ret = -MAXVAL
   else:
     ret = MAXVAL
+  if big:
+    bret = []
   for e in s.edges():
     s.board.push(e)
-    tval = computer_minimax(s, v, depth-1)
+    tval = computer_minimax(s, v, depth+1, a, b)
+    s.board.pop()
+    if big:
+      bret.append((tval, e))
     if turn == chess.WHITE:
       ret = max(ret, tval)
+      a = max(a, ret)
+      if a >= b:
+        break  # b cut-off
     else:
       ret = min(ret, tval)
-    s.board.pop()
-  return ret
+      b = min(b, ret)
+      if a >= b:
+        break  # a cut-off
+  if big:
+    return ret, bret
+  else:
+    return ret
 
 def explore_leaves(s, v):
   ret = []
   start = time.monotonic()
   v.reset()
-  for e in s.edges():
-    s.board.push(e)
-    #ret.append((v(s), e))
-    ret.append((computer_minimax(s, v), e))
-    s.board.pop()
+  cval, ret = computer_minimax(s, v, 0, a=-MAXVAL, b=MAXVAL, big=True)
   eta = time.monotonic() - start
-  print("explored %d nodes in %.3f seconds" % (v.count, eta))
+  print("%.2f: explored %d nodes in %.3f seconds %d/sec" % (cval, v.count, eta, int(v.count/eta)))
   return ret
 
 # chess board and "engine"
