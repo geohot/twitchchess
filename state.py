@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import chess
-import numpy as np
 
 class State(object):
   def __init__(self, board=None):
@@ -13,6 +12,7 @@ class State(object):
     return (self.board.board_fen(), self.board.turn, self.board.castling_rights, self.board.ep_square)
 
   def serialize(self):
+    import numpy as np
     assert self.board.is_valid()
 
     bstate = np.zeros(64, np.uint8)

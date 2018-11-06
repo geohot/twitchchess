@@ -4,6 +4,15 @@ A toy implementation of neural network chess written while livestreaming.
 
 <img width=600px src="https://raw.githubusercontent.com/geohot/twitchchess/master/screenshot.png" />
 
+Can beat me at bullet, maybe rated 1200-1400. Search is 3-ply full with a 5-ply beam(x10).
+
+Nice TODO
+-----
+
+* Value function in play.py/ClassicValuator, plenty of room for improvement.
+* Add Quiescence search to play decent endgame 
+* Is there a bug which allows draws to happen?
+
 Stream
 -----
 
@@ -13,9 +22,16 @@ Usage
 -----
 
 ```
- pip3 install python-chess torch torchvision flask
+ pip3 install python-chess torch torchvision numpy flask
  # then...
  ./play.py   # runs webserver on localhost:5000
+```
+
+Or with pypy (for max speed)
+```
+ pip_pypy install python-chess flask
+ pypy ./play.py
+ # web browse to localhost:5000
 ```
 
 TODOs
