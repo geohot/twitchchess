@@ -131,9 +131,10 @@ def explore_leaves(s, v):
   ret = []
   start = time.time()
   v.reset()
+  bval = v(s)
   cval, ret = computer_minimax(s, v, 0, a=-MAXVAL, b=MAXVAL, big=True)
   eta = time.time() - start
-  print("%.2f: explored %d nodes in %.3f seconds %d/sec" % (cval, v.count, eta, int(v.count/eta)))
+  print("%.2f -> %.2f: explored %d nodes in %.3f seconds %d/sec" % (bval, cval, v.count, eta, int(v.count/eta)))
   return ret
 
 # chess board and "engine"
