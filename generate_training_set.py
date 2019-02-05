@@ -20,7 +20,7 @@ def get_dataset(num_samples=None):
         continue
       value = values[res]
       board = game.board()
-      for i, move in enumerate(game.main_line()):
+      for i, move in enumerate(game.mainline_moves()):
         board.push(move)
         ser = State(board).serialize()
         X.append(ser)
