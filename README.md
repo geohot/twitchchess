@@ -1,6 +1,6 @@
 # twitchchess
 
-<img width=600px src="https://raw.githubusercontent.com/geohot/twitchchess/master/screenshot.png" />
+<img width=600px src="https://raw.githubusercontent.com/Encryptic1/twitchchess/master/screenshot.png" />
 Agents K and J will play selves
 Agent K will play white
 
