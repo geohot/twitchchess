@@ -9,8 +9,9 @@ def get_dataset(num_samples=None):
   gn = 0
   values = {'1/2-1/2':0, '0-1':-1, '1-0':1}
   # pgn files in the data folder
-  for fn in os.listdir("data"):
-    pgn = open(os.path.join("data", fn))
+  data = 'C:\\Users\\cjsli\\envchess\\TrainingGames'
+  for fn in os.listdir(data):
+    pgn = open(os.path.join(data, fn))
     while 1:
       game = chess.pgn.read_game(pgn)
       if game is None:
@@ -35,5 +36,5 @@ def get_dataset(num_samples=None):
 
 if __name__ == "__main__":
   X,Y = get_dataset(25000000)
-  np.savez("processed/dataset_25M.npz", X, Y)
+  np.savez("processed/dataset_5M.npz", X, Y)
 
