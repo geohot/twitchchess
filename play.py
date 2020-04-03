@@ -90,6 +90,7 @@ class ClassicValuator(object):
     b.turn = chess.BLACK
     val -= 0.1 * b.legal_moves.count()
     b.turn = bak
+
     return val
 
 def computer_minimax(s, v, depth, a, b, big=False):
@@ -166,11 +167,11 @@ def to_svg(s):
   return base64.b64encode(chess.svg.board(board=s.board).encode('utf-8')).decode('utf-8')
 
 from flask import Flask, Response, request
-application = Flask(__name__)
+app = Flask(__name__)
 
 winners = np.array([])
 
-@application.route("/")
+@app.route("/")
 def hello():
   ret = open("index.html").read()
   return ret.replace('start', s.board.fen())
@@ -208,7 +209,7 @@ with open('rnd.pickle','wb') as rnd:
 moves = []
 with open('g.pickle','wb') as g:
     pickle.dump(moves, g)
-@application.route("/selfplay")
+@app.route("/selfplay")
 def selfplay():
     m = request.args.get('m', default='')
     with open('rnd.pickle','rb') as rnd:
@@ -240,7 +241,7 @@ def selfplay():
                 pickle.dump(moves, g)
                 print(colored(moves,'cyan'))
             m1 = rndmove + ":"
-            response = application.response_class(
+            response = app.response_class(
             response=m1 + s.board.fen(),
               status=200
             )
@@ -263,7 +264,7 @@ def selfplay():
                 pickle.dump(moves, g)
                 print(colored(moves,'cyan'))
             m1 = m2 + ":"
-            response = application.response_class(
+            response = app.response_class(
             response=m1 + si.board.fen(),
                 status=200
             )
@@ -271,7 +272,7 @@ def selfplay():
         return ret
 
 # move given in algebraic notation
-@application.route("/move")
+@app.route("/move")
 def move():
   if not s.board.is_game_over():
     move = s.board.san(chess.Move(move[0][1]))
@@ -282,14 +283,14 @@ def move():
         computer_move(s, v)
       except Exception:
         traceback.print_exc()
-    response = application.response_class(
+    response = app.response_class(
       response=s.board.fen(),
       status=200
     )
     return response
   else:
     print(colored(Style.BRIGHT + "********************* GAME IS OVER *********************",'red'))
-    response = application.response_class(
+    response = app.response_class(
       response="game over",
       status=200
     )
@@ -298,7 +299,7 @@ def move():
   return hello()
 
 # moves given as coordinates of piece moved
-@application.route("/move_coordinates")
+@app.route("/move_coordinates")
 def move_coordinates():
   
   if not s.board.is_game_over():
@@ -329,19 +330,19 @@ def move_coordinates():
         m1 = m2 + ":"
       except Exception:
         traceback.print_exc()
-      response = application.response_class(
+      response = app.response_class(
       response=m1 + s.board.fen(),
       status=200
       )
     return response
   print(colored(Style.BRIGHT + "********************* GAME IS OVER *********************",'red'))
-  response = application.response_class(
+  response = app.response_class(
     response="game over",
     status=200
   )
   return response
 
-@application.route("/post")
+@app.route("/post")
 def post():
   game = chess.pgn.Game()
   with open('si.pickle', 'rb') as f:
@@ -378,25 +379,25 @@ def post():
   Col = ['Winner']
   df = pd.DataFrame(winners,columns=Col)
   html = df.to_html()
-  response = application.response_class(
+  response = app.response_class(
     response=html,
     status=200
   )
   return response
 
-@application.route("/newgame")
+@app.route("/newgame")
 def newgame():
   s.board.reset()
-  response = application.response_class(
+  response = app.response_class(
     response=s.board.fen(),
     status=200
   )
   return response
 
-@application.route("/undo")
+@app.route("/undo")
 def undo():
   s.board.pop()
-  response = application.response_class(
+  response = app.response_class(
     response=s.board.fen(),
     status=200
   )
@@ -408,5 +409,5 @@ if __name__ == "__main__":
         print(s.board)
         print(s.board.result())
   else:
-        application.run(debug=True)
+        app.run(debug=True)
         
