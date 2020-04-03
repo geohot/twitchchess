@@ -1,59 +1,20 @@
 # twitchchess
 
-A toy implementation of ~~neural network~~ normal chess written while livestreaming.
-
 <img width=600px src="https://raw.githubusercontent.com/geohot/twitchchess/master/screenshot.png" />
+Agents K and J will play selves
+Agent K will play white
 
-Can beat me at bullet, maybe rated 1200-1400. Search is 3-ply full with a 5-ply beam(x10).
+modded from git GEOHOT/twitchchess
+Added more HTML feeback and colorized console, added more exceptions and feedback in waiting.
+- trained on grandmaster games to .017% loss rate saved to new net
+- built in replies from index.html
+- built log for saving to TrainingGames/ 
+	can self training get rid of the consistent start pattern?
+	Randomized first move in selfplay for training sets. commented out original
 
-Nice TODO
------
-
-* Value function in play.py/ClassicValuator, plenty of room for improvement.
-* Add Quiescence search to play decent endgame 
-* Is there a bug which allows draws to happen?
-
-Stream
------
-
-https://www.twitch.tv/tomcr00s3
-
-Usage
------
-
-```
- pip3 install python-chess torch torchvision numpy flask
- # then...
- ./play.py   # runs webserver on localhost:5000
-```
-
-Or with pypy (for max speed)
-```
- pip_pypy install python-chess flask
- pypy ./play.py
- # web browse to localhost:5000
-```
-
-TODOs
------
-
-* Roll out search beyond 1-ply
-* Make trainer multi GPU
-* Train on more data
-* Add RL self play learning support
-
-Implementation
------
-
-twitchchess is a simple 1 look ahead neural network value function. The trained net is in nets/value.pth. It takes in a serialized board and outputs a range from -1 to 1. -1 means black is win, 1 means white is win.
-
-Serialization
------
-
-We serialize the board into a 8x8x5 bitvector. See state.py for how.
-
-Training Set
------
-
-The value function was trained on 5M board positions from http://www.kingbase-chess.net/
+	TODO:
+	- the array element which right now could be a list either needs more columns for data loggs (suggest cap valuation)
+	- Winner table
+	- selftrain set
+	- was there a purpose for that /move funtion?
 
