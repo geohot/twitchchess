@@ -1,9 +1,5 @@
 README
 <img width=600px src="https://raw.githubusercontent.com/geohot/twitchchess/master/screenshot.png" />
-
-
-
-
 Agents K and J will play selves
 Agent K will play white
 
@@ -19,3 +15,4 @@ Added more HTML feeback and colorized console, added more exceptions and feedbac
 	- the array element which right now could be a list either needs more columns for data loggs (suggest cap valuation)
 	- Winner table
 	- selftrain set
+	- was there a purpose for that /move funtion?
