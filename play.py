@@ -226,16 +226,21 @@ def selfplay():
             print(colored('move: ' + str(i),'yellow'))
             print(colored(m,'cyan'))
             #ORIGINAL with added state reply m2,si = computer_move(s, v)
-            
+            # Added random pawn move
+            vector = ['a','b','c','d','e','f','g','h']
+            sauce = random.choice(vector)
+            #only moving straight
+            rndmove = sauce + str(2) + sauce + str(3)
+            s.board.push_san(rndmove)
             with open('si.pickle', 'wb') as p:
-                pickle.dump(si, p)
+                pickle.dump(s, p)
             with open('g.pickle','rb')as g:
                 moves = pickle.load(g)
-                moves.append(m2)
+                moves.append(rndmove)
             with open('g.pickle','wb')as g:
                 pickle.dump(moves, g)
                 print(colored(moves,'cyan'))
-            m1 = m2 + ":"
+            m1 = rndmove + ":"
             response = application.response_class(
             response=m1 + s.board.fen(),
               status=200
