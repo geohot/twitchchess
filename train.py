@@ -5,6 +5,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset
 from torch import optim
+from colorama import Fore, Back, Style, init
+import termcolor
+init(autoreset=True)
+from termcolor import colored
 
 class ChessValueDataset(Dataset):
   def __init__(self):
@@ -101,6 +105,6 @@ if __name__ == "__main__":
       all_loss += loss.item()
       num_loss += 1
 
-    print("%3d: %f" % (epoch, all_loss/num_loss))
+    print(colored("%3d: %f",'cyan') % (epoch, all_loss/num_loss))
     torch.save(model.state_dict(), "nets/value.pth")
 
