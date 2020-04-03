@@ -90,7 +90,6 @@ class ClassicValuator(object):
     b.turn = chess.BLACK
     val -= 0.1 * b.legal_moves.count()
     b.turn = bak
-
     return val
 
 def computer_minimax(s, v, depth, a, b, big=False):
