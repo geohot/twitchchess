@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-#from __future__ import print_function
 import os
 import chess
 import time
@@ -19,8 +18,8 @@ from halo import Halo
 import pickle
 import numpy as np
 import pandas as pd
-
 class Valuator(object):
+
   def __init__(self):
     import torch
     from train import Net
@@ -143,7 +142,7 @@ def computer_minimax(s, v, depth, a, b, big=False):
 def explore_leaves(s, v):
   ret = []
   rndm = random.randint(2,12)
-  print(colored(Style.BRIGHT + 'Thinking about your move ','magenta') + colored(str(rndm),'cyan') + colored(Style.BRIGHT + ' Out.... Probably more O.o','magenta'))
+  #print(colored(Style.BRIGHT + 'Thinking about your move ','magenta') + colored(str(rndm),'cyan') + colored(Style.BRIGHT + ' Out.... Probably more O.o','magenta'))
   spinner = Halo(text='SEARCHING MINDSTATE',text_color='cyan', spinner='simpleDotsScrolling',color='cyan')
   spinner.start()
   start = time.time()
@@ -226,7 +225,8 @@ def selfplay():
         while not s.board.is_game_over():
             print(colored('move: ' + str(i),'yellow'))
             print(colored(m,'cyan'))
-            m2,si = computer_move(s, v)
+            #ORIGINAL with added state reply m2,si = computer_move(s, v)
+            
             with open('si.pickle', 'wb') as p:
                 pickle.dump(si, p)
             with open('g.pickle','rb')as g:
@@ -304,10 +304,8 @@ def move_coordinates():
     targe = request.args.get('targe', default='')
     promotion = True if request.args.get('promotion', default='') == 'true' else False
     move = s.board.san(chess.Move(source, target, promotion=chess.QUEEN if promotion else None))
-
     if move is not None and move != "":
       print(colored(Style.BRIGHT + "human moves",'cyan'), colored(Style.BRIGHT + move,'green'))
-      
       m1 = ':'
       try:
         s.board.push_san(move)
@@ -339,8 +337,6 @@ def move_coordinates():
   )
   return response
 
-
-
 @application.route("/post")
 def post():
   game = chess.pgn.Game()
@@ -354,12 +350,12 @@ def post():
         winners = np.append(1)
       elif b.result() == "0-1":
         game.headers["Result"] = "0-1"
-        winners = np.append(0)
-      else: 
         winners = np.append(2)
+      else: 
+        winners = np.append(3)
   win = open('winner.txt', 'a')
   sgame = str(game)
-  win.write(winner + sgame)
+  win.write(winner + ":\n" + sgame)
   game.headers["Event"] = "Agentjk"
   game.headers["Site"] = "local"
   game.headers["Date"] = datetime.now()
