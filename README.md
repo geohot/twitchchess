@@ -27,6 +27,11 @@ human play will give both shell and html feedack
 - must wait until your turn to ff 
 - new game resets board without posting game
 
+*************************************************************
+MAKE SURE: 
+you need to make a folder called TrainingGames in the root directory for game dumps and for generating training set.
+*************************************************************
+
 	TODO:
 	- selftrain set
 	-  add policy condition(make utility move) for tie values, in lategame the bot plays safe. wheres the aggro?
