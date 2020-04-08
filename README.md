@@ -1,4 +1,4 @@
-# twitchchess
+# MIB Chess
 
 <img width=600px src="https://raw.githubusercontent.com/Encryptic1/twitchchess/master/m1.PNG" />
 Agents K and J will play selves
