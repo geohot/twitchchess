@@ -212,9 +212,12 @@ with open('g.pickle','wb') as g:
 @app.route("/selfplay")
 def selfplay():
     m = request.args.get('m', default='')
-    with open('rnd.pickle','rb') as rnd:
-        i = pickle.load(rnd)
-        i = 1 + i
+    try:
+        with open('rnd.pickle','rb') as rnd:
+            i = pickle.load(rnd)
+            i = 1 + i
+    except:
+        i = 0
     with open('rnd.pickle','wb') as rnd:
         pickle.dump(i,rnd)
     if m == '':
@@ -223,52 +226,69 @@ def selfplay():
         #s = request.args.get('s', default='')
         ret = 'game over'
         while not s.board.is_game_over():
-            print(colored('move: ' + str(i),'yellow'))
-            print(colored(m,'cyan'))
-            #ORIGINAL with added state reply m2,si = computer_move(s, v)
-            # Added random pawn move
-            vector = ['a','b','c','d','e','f','g','h']
-            sauce = random.choice(vector)
-            #only moving straight
-            rndmove = sauce + str(2) + sauce + str(3)
-            s.board.push_san(rndmove)
-            with open('si.pickle', 'wb') as p:
-                pickle.dump(s, p)
-            with open('g.pickle','rb')as g:
-                moves = pickle.load(g)
-                moves.append(rndmove)
-            with open('g.pickle','wb')as g:
-                pickle.dump(moves, g)
-                print(colored(moves,'cyan'))
-            m1 = rndmove + ":"
-            response = app.response_class(
-            response=m1 + s.board.fen(),
-              status=200
-            )
-            return response
+             while not s.board.is_stalemate():
+                print(colored('move: ' + str(i),'yellow'))
+                print(colored(m,'cyan'))
+                #ORIGINAL with added state reply m2,si = computer_move(s, v)
+                # Added random pawn move
+                vector = ['a','b','c','d','e','f','g','h']
+                sauce = random.choice(vector)
+                #only moving straight
+                # add 2 step first move
+                vector1 = [3,4]
+                tustep = str(random.choice(vector1))
+                rndmove = sauce + str(2) + sauce + tustep
+                s.board.push_san(rndmove)
+                with open('si.pickle', 'wb') as p:
+                    pickle.dump(s, p)
+                with open('g.pickle','rb')as g:
+                    moves = pickle.load(g)
+                    moves.append(rndmove)
+                with open('g.pickle','wb')as g:
+                    pickle.dump(moves, g)
+                    print(colored(moves,'cyan'))
+                m1 = rndmove + ":"
+                response = app.response_class(
+                response=m1 + s.board.fen(),
+                  status=200
+                )
+                return response
+             m1 = "stalemate:"
+             response = app.response_class(
+             response=m1 + s.board.fen(),
+                status=200
+             )
+             return response
         return ret
     else:
         ret = 'game over'
         with open('si.pickle', 'rb') as f:
                 si = pickle.load(f)
         while not si.board.is_game_over():
-            m2,sii = computer_move(si, v)
-            with open('si.pickle', 'wb') as p:
-                pickle.dump(sii, p)
-            print(colored('move: ' + str(i),'yellow'))
-            #ret += '<img width=600 height=600 src="data:image/svg+xml;base64,%s"></img><br/>' % to_svg(sii)
-            with open('g.pickle','rb')as g:
-                moves = pickle.load(g)
-                moves.append(m2)
-            with open('g.pickle','wb')as g:
-                pickle.dump(moves, g)
-                print(colored(moves,'cyan'))
-            m1 = m2 + ":"
-            response = app.response_class(
+            while not si.board.is_stalemate():
+                m2,sii = computer_move(si, v)
+                with open('si.pickle', 'wb') as p:
+                    pickle.dump(sii, p)
+                print(colored('move: ' + str(i),'yellow'))
+                #ret += '<img width=600 height=600 src="data:image/svg+xml;base64,%s"></img><br/>' % to_svg(sii)
+                with open('g.pickle','rb')as g:
+                    moves = pickle.load(g)
+                    moves.append(m2)
+                with open('g.pickle','wb')as g:
+                    pickle.dump(moves, g)
+                    print(colored(moves,'cyan'))
+                m1 = m2 + ":"
+                response = app.response_class(
+                response=m1 + si.board.fen(),
+                    status=200
+                )
+                return response
+            m1 = "stalemate:"
+            resp = app.response_class(
             response=m1 + si.board.fen(),
                 status=200
             )
-            return response
+            return resp
         return ret
 
 # move given in algebraic notation
@@ -301,29 +321,43 @@ def move():
 # moves given as coordinates of piece moved
 @app.route("/move_coordinates")
 def move_coordinates():
-  
+  with open('rnd.pickle','rb') as rnd:
+     i = pickle.load(rnd)
+     i = 1 + i
+  with open('rnd.pickle','wb') as rnd:
+     pickle.dump(i,rnd)
+  print(colored("move: " + str(i),'yellow'))
   if not s.board.is_game_over():
     source = int(request.args.get('from', default=''))
     sauce = request.args.get('sauce', default='')
-    target = int(request.args.get('to', default=''))
+    try:
+        target = int(request.args.get('to', default=''))
+    except:
+        m1 = ":"
+        response = app.response_class(
+          response=m1 + s.board.fen() ,
+          status=200
+          )
+        return response
     targe = request.args.get('targe', default='')
     promotion = True if request.args.get('promotion', default='') == 'true' else False
     move = s.board.san(chess.Move(source, target, promotion=chess.QUEEN if promotion else None))
     if move is not None and move != "":
       print(colored(Style.BRIGHT + "human moves",'cyan'), colored(Style.BRIGHT + move,'green'))
       m1 = ':'
+      move1 = sauce + targe
       try:
         s.board.push_san(move)
         with open('g.pickle','rb')as g:
                 moves = pickle.load(g)
-                moves = moves.append(move)
+                moves.append(move1)
         with open('g.pickle','wb')as g:
                 pickle.dump(moves, g)
                 print(colored(moves,'cyan'))
         m2,s1 = computer_move(s, v)
         with open('g.pickle','rb')as g:
                 moves = pickle.load(g)
-                moves = moves.append(m2)
+                moves.append(m2)
         with open('g.pickle','wb')as g:
                 pickle.dump(moves, g)
                 print(colored(moves,'cyan'))
@@ -342,47 +376,71 @@ def move_coordinates():
   )
   return response
 
+wins=pd.DataFrame({'W':[1,0],'B':[0,1],'Winner':['White','Black']})
+with open('w.pickle','wb')as w:
+    pickle.dump(wins,w)
+
 @app.route("/post")
 def post():
   game = chess.pgn.Game()
-  with open('si.pickle', 'rb') as f:
-    si = pickle.load(f)
-    b = si.board
-    # game over values
-    if b.is_game_over():
-      if b.result() == "1-0":
-        game.headers["Result"] = "1-0"
-        winners = np.append(1)
-      elif b.result() == "0-1":
-        game.headers["Result"] = "0-1"
-        winners = np.append(2)
-      else: 
-        winners = np.append(3)
-  win = open('winner.txt', 'a')
-  sgame = str(game)
-  win.write(winner + ":\n" + sgame)
   game.headers["Event"] = "Agentjk"
   game.headers["Site"] = "local"
   game.headers["Date"] = datetime.now()
   game.headers["White"] = "Agent-J"
   game.headers["Black"] = "Agent-K"
-  game.end()
-  print(game)
-  with open('g.pickle','rb')as g:
+  with open('si.pickle', 'rb') as f:
+    si = pickle.load(f)
+    b = si.board
+    # game over values
+    if b.result() == "1-0":
+        game.headers["Result"] = "1-0"
+        winner = "WHITE"
+    elif b.result() == "0-1":
+        game.headers["Result"] = "0-1"
+        winner = "BLACK"
+    else: 
+        winner = "BLACK"
+    win = open('winner.txt', 'a')
+    game.end()
+    print(game)
+    with open('g.pickle','rb')as g:
         moves = pickle.load(g)
-        print(colored("Final Game",'cyan') + moves)
-        node = game.add_variations(chess.Move.from_uci(moves[0]))
-        for m in moves:
-            node = node.add_variations(chess.Move.from_uci(m))
-        log = open('/TrainingGames/'+ str(datetime.now())+".pgn", 'a')
-        log.write(game)
-  Col = ['Winner']
-  df = pd.DataFrame(winners,columns=Col)
-  html = df.to_html()
+        movesst = str(moves)
+        print(colored("Game Final",'cyan') + movesst)
+    node = game.add_variation(chess.Move.from_uci(moves[0]))
+    for m in moves:
+        node = node.add_variation(chess.Move.from_uci(m))
+    stamp = str(datetime.now()).replace(":","_")
+    log = open('TrainingGames/'+ stamp +".pgn", 'w+')
+    try:
+        sgame = "Final Board:\n" + str(movesst)
+    except:
+        print(colored(Front.BRIGHT + "Save Game Fail",'red'))
+    log.write(sgame)
+    win.write(winner + ":\n" + sgame)
+    if winner == "BLACK":
+        res1 = 0
+        res2 = 1
+    else:
+        res1 = 1
+        res2 = 0
+  with open('w.pickle','rb')as w:
+        wins = pickle.load(w)
+  win1 = pd.DataFrame({'W':[res1],'B':[res2],'Winner':[winner]})
+  wins.append(win1)
+  with open('w.pickle','wb')as w:
+    pickle.dump(wins,w)
+  html = wins.to_html()
   response = app.response_class(
-    response=html,
+    response= html,
     status=200
   )
+  i = 0
+  with open('rnd.pickle','wb') as rnd:
+    pickle.dump(i,rnd)
+  with open('g.pickle','wb')as g:
+    moves = []
+    pickle.dump(moves, g)
   return response
 
 @app.route("/newgame")
@@ -392,6 +450,12 @@ def newgame():
     response=s.board.fen(),
     status=200
   )
+  i = 0
+  with open('rnd.pickle','wb') as rnd:
+    pickle.dump(i,rnd)
+  with open('g.pickle','wb')as g:
+    moves = []
+    pickle.dump(moves, g)
   return response
 
 @app.route("/undo")
