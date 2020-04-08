@@ -291,33 +291,6 @@ def selfplay():
             return resp
         return ret
 
-# move given in algebraic notation
-@app.route("/move")
-def move():
-  if not s.board.is_game_over():
-    move = s.board.san(chess.Move(move[0][1]))
-    if move is not None and move != "":
-      print(colored(Style.BRIGHT + "human moves",'cyan'), colored(Style.BRIGHT + move,'green'))
-      try:
-        s.board.push_san(move)
-        computer_move(s, v)
-      except Exception:
-        traceback.print_exc()
-    response = app.response_class(
-      response=s.board.fen(),
-      status=200
-    )
-    return response
-  else:
-    print(colored(Style.BRIGHT + "********************* GAME IS OVER *********************",'red'))
-    response = app.response_class(
-      response="game over",
-      status=200
-    )
-    return response
-  print("hello ran")
-  return hello()
-
 # moves given as coordinates of piece moved
 @app.route("/move_coordinates")
 def move_coordinates():
@@ -427,7 +400,7 @@ def post():
   with open('w.pickle','rb')as w:
         wins = pickle.load(w)
   win1 = pd.DataFrame({'W':[res1],'B':[res2],'Winner':[winner]})
-  wins.append(win1)
+  pd.DataFrame.append(wins,win1)
   with open('w.pickle','wb')as w:
     pickle.dump(wins,w)
   html = wins.to_html()
