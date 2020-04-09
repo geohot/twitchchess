@@ -1,59 +1,126 @@
 <!doctype html>
 <html>
 <head>
-
-<title>twitchchess</title>
-
-<link rel="stylesheet" type="text/css" href="static/chessboard.min.css">
-
-<script src="static/jquery.min.js"></script>
-<script src="static/chessboard.min.js"></script>
-
+    <title>Agent-K & J Chess</title>
+    <link rel="stylesheet" type="text/css" href="static/chessboard.min.css">
+    <script src="static/jquery.min.js"></script>
+    <script src="static/chessboard.min.js"></script>
 </head>
 <body style="font-size: 20px;">
-
-<a href="/selfplay">Play vs itself</a>
-<button onclick="newGame()">new game</button><br/>
-<div id="board" style="width: 600px"></div>
-<p></p>
-
-
-<script type="text/javascript">
-
-var board = ChessBoard('board', {
-  position: 'start',
-  draggable: true,
-  onDrop: onDrop
-});
-
-var files = {"a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7};
-function get_square(sq) {
-  return 8*(parseInt(sq.charAt(1)) - 1) + files[sq.charAt(0)];
-}
-
-
-function onDrop(source, target, piece) {
-  if(source == target) return
-
-  var promotion = piece.toLowerCase().charAt(1) == 'p' && parseInt(target.charAt(1)) == 8;
-
-  $.get('/move_coordinates', {'from': get_square(source), 'to': get_square(target), 'promotion': promotion}, function(r) {
-    if (r.includes("game over")) {
-      document.querySelector('p').innerText = 'game over';
-    } else {
-      document.querySelector('p').innerText = '';
-      board.position(r);
-    }
-  });
-}
-
-function newGame() {
-  $.get('/newgame', function(r) {
-    document.querySelector('p').innerText = '';
-    board.position(r);
-  });
-}
-</script>
-
+    <button onclick="selfplay()">SELF PLAY</button><br />
+    <button onclick="newGame()">NEW GAME</button><br />
+    <div id="board" style="width: 600px"></div>
+    <p></p>
+    <script type="text/javascript">
+        var board = ChessBoard('board', {
+            position: 'start',
+            draggable: true,
+            onDrop: onDrop
+        });
+        var files = { "a": 0, "b": 1, "c": 2, "d": 3, "e": 4, "f": 5, "g": 6, "h": 7 };
+        function get_square(sq) {
+            return 8 * (parseInt(sq.charAt(1)) - 1) + files[sq.charAt(0)];
+        }
+        function post() {
+            var element = document.getElementById("id01");
+            element.innerHTML = "Posting Winner";
+            element.style = "color:green;"
+            $.get('/post', function (r) {
+                var element = document.getElementById("id03")
+                element.innerHTML = r
+                newGame()
+                selfplay()
+            });
+        }
+        function onDrop(source, target, piece) {
+            if (source == target) return
+            var element = document.getElementById("id01");
+            element.innerHTML = "Searching AI Mindstate";
+            element.style = "color:orange;"
+            var promotion = piece.toLowerCase().charAt(1) == 'p' && parseInt(target.charAt(1)) == 8;
+            var element = document.getElementById("id02");
+            element.innerHTML = "You Moved : " + source + target;
+            $.get('/move_coordinates', { 'from': get_square(source), 'to': get_square(target), 'sauce': source, 'targe': target, 'promotion': promotion }, function (r) {
+                if (r.includes("game over")) {
+                    document.querySelector('p').innerText = 'game over';
+                    post();
+                } else {
+                    if (r.includes(":")) {
+                        var move = r.split(":")[0];
+                        var r1 = r.split(":")[1];
+                        document.querySelector('p').innerText = '';
+                        board.position(r1);
+                        var element = document.getElementById("id01");
+                        element.innerHTML = "WHITE TURN";
+                        element.style = "color:green;";
+                        var element = document.getElementById("id02");
+                        element.innerHTML = "Computer Moved : " + move;
+                    } else {
+                        var element = document.getElementById("id01");
+                        element.innerHTML = "All kinds of messed up: restart needed";
+                        element.style = "color:red;";
+                        post();
+                    }
+                }
+            });
+        }
+        function newGame() {
+            var element = document.getElementById("id01");
+            element.innerHTML = "YOUR TURN";
+            element.style = "color:green;"
+            $.get('/newgame', function (r) {
+                document.querySelector('p').innerText = '';
+                board.position(r);
+            });
+        }
+        function eo(num) { return num % 2; } {
+        }
+        var i = 0
+        function selfplay(m) {
+            i = 1 + i
+            if (m == null) var m = ''
+            var element = document.getElementById("id01");
+            if (eo(i)) {
+                element.innerHTML = "Agent-J Thinking";
+                element.style = "color:darkmagenta;"
+            } else {
+                element.innerHTML = "Agent-K Thinking";
+                element.style = "color:black;"
+            }
+            $.get('/selfplay', { 'm': m }, function (r) {
+                if (r.includes("game over")) {
+                    document.querySelector('p').innerText = 'game over';
+                    post();
+                } else {
+                    if (r.includes(":")) {
+                        var move = r.split(":")[0];
+                        var r1 = r.split(":")[1];
+                        document.querySelector('p').innerText = '';
+                        board.position(r1);
+                        var element = document.getElementById("id02");
+                        element.innerHTML = "Last Move: " + move;
+                        selfplay(move);
+                    } else {
+                        var element = document.getElementById("id01");
+                        element.innerHTML = "All kinds of messed up: restart needed";
+                        element.style = "color:red;";
+                    }
+                }
+            });
+        }
+        function undo() {
+            var element = document.getElementById("id01");
+            element.innerHTML = "Udid move";
+            element.style = "color:red;"
+            $.get('/undo', function (r) {
+                document.querySelector('p').innerText = '';
+                board.position(r);
+            });
+        }
+    </script>
+    
+    <h1 id="id01" style="color:green">YOUR TURN</h1>
+    <h1 id="id02" style="color:darkblue">Lastmove</h1>
+    <h3 id="id03">winner table</h3>
 </body>
 </html>

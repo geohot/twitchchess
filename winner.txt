@@ -1,0 +1,56 @@
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+WHITE:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['f2f3', 'e7e5']BLACK:
+Final Board:
+['d2d3', 'e7e6']BLACK:
+Final Board:
+['d2d3', 'e7e6']BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['e2e3', 'e7e6']BLACK:
+Final Board:
+['d2d4', 'e7e6', 'c2c3', 'd8h4', 'd1a4', 'h4e4', 'c1g5', 'e4f5', 'g1f3', 'b8c6', 'd4d5', 'f5d5', 'e2e4', 'd5c5', 'b1a3', 'c6e5', 'f3e5', 'c5e5', 'f2f4', 'e5c5', 'a3c4', 'b7b5', 'a4d1', 'b5c4', 'f1e2', 'h7h6', 'g5h4', 'c5e3', 'h4f2', 'e3e4', 'e1g1', 'e4f4', 'f2d4', 'f4g5', 'e2h5', 'g8f6', 'h5f7', 'e8f7', 'h2h4', 'g5h4', 'd1f3', 'a8b8', 'b2b3', 'c4b3', 'a2b3', 'f8d6', 'f3h3', 'h4g5', 'b3b4', 'c8b7', 'a1a5', 'b7g2', 'h3g2', 'g5h4', 'd4e5', 'd6e5', 'a5e5', 'd7d5', 'g2f3', 'f7e7', 'g1g2', 'e7d6', 'f1h1', 'h4g4', 'f3g4', 'f6g4', 'e5e2', 'h8f8', 'h1a1', 'd6d7', 'a1a6', 'f8f6', 'a6a7', 'f6f4', 'g2g3', 'b8f8', 'a7a5', 'g4f2', 'a5a1', 'f4g4', 'g3h2', 'f8f5', 'e2f2', 'f5h5']WHITE:
+Final Board:
+['b2b3', 'b8c6', 'e2e3', 'a7a5', 'd1g4', 'e7e5', 'f1b5', 'c6b4', 'g4f5', 'd8f6', 'f5e4', 'e8d8', 'c1b2', 'd7d6', 'b1a3', 'c7c6', 'b5e2', 'h7h5', 'g1h3', 'c8h3', 'g2h3', 'h8h6', 'h1g1', 'g8e7', 'c2c3', 'e7c8', 'c3b4', 'a5b4', 'e4b4', 'h6g6', 'g1f1', 'c6c5', 'b4b7', 'a8a3', 'b2a3', 'e5e4', 'a1c1', 'g6g5', 'h3h4', 'f6f5', 'h4g5', 'f8e7', 'f1g1', 'e7g5', 'a3b4', 'g5e3', 'd2e3', 'd8e8', 'e2b5', 'e8f8', 'b4c3', 'c5c4', 'b5d7', 'f5c5', 'c3g7', 'f8g8', 'g7e5', 'g8f8', 'b7c8', 'c5c8', 'e5d6']WHITE:
+Final Board:
+['e7e6', 'e2e4', 'd8h4', 'd1f3', 'g8f6', 'b1c3', 'f8c5', 'f1b5', 'c7c6', 'b2b4', 'f6g4', 'b4c5', 'c6b5', 'c3b5', 'g4e5', 'f3e2', 'e8d8', 'd2d4', 'e5c6', 'g1f3', 'h4h5', 'h2h3', 'c6d4', 'f3d4', 'h5c5', 'c1f4', 'b8a6', 'd4e6', 'f7e6', 'e1c1', 'h8f8', 'g2g3', 'g7g6', 'd1d6', 'd8e7', 'd6d1', 'e7d8', 'd1d6', 'd8e7', 'd6d1', 'e7d8', 'd1d6', 'd8e7', 'd6d1', 'e7d8', 'd1d6', 'd8e7', 'd6d2', 'e7e8', 'f4d6', 'c5g5', 'f2f4', 'g5g3', 'd6f8', 'g3f4', 'h1f1', 'f4g5', 'b5d6', 'e8d8', 'd6f7', 'd8c7', 'f8d6', 'c7b6', 'f7g5', 'h7h6', 'e2c4', 'b6a5', 'a3a4', 'h6g5', 'c4b5']
