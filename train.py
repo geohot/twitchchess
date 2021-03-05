@@ -64,7 +64,7 @@ class Net(nn.Module):
     x = self.last(x)
 
     # value output
-    return F.tanh(x)
+    return torch.tanh(x)
 
 if __name__ == "__main__":
   device = "cuda"
