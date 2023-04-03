@@ -16,7 +16,7 @@ Nice TODO
 Stream
 -----
 
-https://www.twitch.tv/tomcr00s3
+https://www.twitch.tv/georgehotz
 
 Usage
 -----
