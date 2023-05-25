@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import os
+import chess
 import chess.pgn
 import numpy as np
 from state import State
+from pathlib import Path
 
 def get_dataset(num_samples=None):
   X,Y = [], []
@@ -29,6 +31,8 @@ def get_dataset(num_samples=None):
       if num_samples is not None and len(X) > num_samples:
         return X,Y
       gn += 1
+except IOError as e:
+            print(f"Error processing file {file_path}: {str(e)}")    
   X = np.array(X)
   Y = np.array(Y)
   return X,Y
