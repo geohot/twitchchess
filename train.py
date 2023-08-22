@@ -35,7 +35,7 @@ class Net(nn.Module):
     self.c3 = nn.Conv2d(64, 128, kernel_size=2, stride=2)
     self.d1 = nn.Conv2d(128, 128, kernel_size=1)
     self.d2 = nn.Conv2d(128, 128, kernel_size=1)
-    self.d3 = nn.Conv2d(128, 128, kernel_size=1
+    self.d3 = nn.Conv2d(128, 128, kernel_size=1)
     self.last = nn.Linear(128, 1)
 
   def forward(self, x):
