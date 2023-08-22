@@ -33,29 +33,31 @@ class Net(nn.Module):
     self.c1 = nn.Conv2d(64, 64, kernel_size=2, padding=1)
     self.c2 = nn.Conv2d(64, 64, kernel_size=2, padding=1)
     self.c3 = nn.Conv2d(64, 128, kernel_size=2, stride=2)
-
     self.d1 = nn.Conv2d(128, 128, kernel_size=1)
     self.d2 = nn.Conv2d(128, 128, kernel_size=1)
     self.d3 = nn.Conv2d(128, 128, kernel_size=1)
-
     self.last = nn.Linear(128, 1)
 
   def forward(self, x):
+    
+    # 8x8
     x = F.relu(self.a1(x))
     x = F.relu(self.a2(x))
     x = F.relu(self.a3(x))
 
-    # 4x4
+    # 3x3
     x = F.relu(self.b1(x))
     x = F.relu(self.b2(x))
     x = F.relu(self.b3(x))
 
-    # 2x2
+    # 1x1
     x = F.relu(self.c1(x))
+    # 2x2
     x = F.relu(self.c2(x))
+    # 3x3
     x = F.relu(self.c3(x))
 
-    # 1x128
+    # 1x1
     x = F.relu(self.d1(x))
     x = F.relu(self.d2(x))
     x = F.relu(self.d3(x))
